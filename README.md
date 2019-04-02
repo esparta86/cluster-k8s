@@ -13,9 +13,9 @@
 gcloud iam service-accounts create custom-sa-k8s --display-name "custom-sa-k8s"
 
 
-```bash
+```
 
-#### 2. Kubernetes Engine Cluster Admin: Management of Kubernetes Clusters.
+#### 2. GRANT ROLES TO SERVICE ACCOUNT
 
 ```bash
 #-------------------------------------- Kubernetes Engine Cluster Admin: Management of Kubernetes Clusters. --------------------------------------
@@ -52,22 +52,16 @@ $ gcloud projects add-iam-policy-binding devops-k8-86 --member serviceAccount:cu
 
 ```
 
-#### 3. If you need to update something in the image docker you need to compile again in order to get a new version of image docker with the next command
-If not then skip this step
+#### 3. CREATE SERVICE ACCOUNT KEY , DOWNLOAD KEY
+
+
+#### 3. ACTIVATE SERVICE ACCOUNT KEY 
+
+
 
 ```bash
-export PROJECT_ID="$(gcloud config get-value project -q)"   # If you are using Cloud Shell
 
-$ docker build -t gcr.io/${PROJECT_ID}/php-mailer:VERSION .      # type in version the correct version of image according the step 3. 
-
-#OUTPUT
-
-Step 26/26 : CMD ["/usr/bin/supervisord"]
- ---> Running in 3776f65db1bc
-Removing intermediate container 3776f65db1bc
- ---> 1f4c6e40c3ce
-Successfully built 1f4c6e40c3ce
-Successfully tagged gcr.io/ti-is-devenv-01/php-mailer:VERSION
+gcloud auth activate-service-account custom-sa-k8s@devops-k8-86.iam.gserviceaccount.com  --key-file=devops-k8-86-137921350dfa.json
 
 ```
 
