@@ -1,0 +1,48 @@
+nameOverride: jenkins-production-latest
+fullnameOverride: jenkins-production-latest
+Master:
+  Name: jenkins-master-latest
+  Image: "jenkins/jenkins"
+  ImageTag: "lts"
+  ImagePullPolicy: "Always"
+# ImagePullSecret: jenkins
+  Component: "jenkins-master-latest"
+  UseSecurity: true
+  HostNetworking: false
+  AdminUser: admindevopsk8s
+  # AdminPassword: <defaults to random>
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "2000m"
+      memory: "3500Mi"
+  ServicePort: 8080
+  ServiceType: LoadBalancer
+  CLI: false
+  InstallPlugins:
+    - kubernetes:latest
+    - workflow-job:latest
+    - workflow-aggregator:latest
+    - credentials-binding:latest
+    - git:latest
+    - google-oauth-plugin:latest
+    - google-source-plugin:latest
+  JavaOpts: "-Xms3500m -Xmx3500m"
+Agent:
+  Enabled: false
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "128Mi"
+    limits:
+      cpu: "400m"
+      memory: "512Mi"
+Persistence:
+  Size: 20Gi
+NetworkPolicy:
+  ApiVersion: networking.k8s.io/v1
+rbac:
+  install: true
+  serviceAccountName: cd-jenkins

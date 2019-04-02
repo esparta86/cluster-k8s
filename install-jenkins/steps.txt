@@ -1,0 +1,16 @@
+By default the service account doesnot add into RBAC in cluster for that reason
+You should add the service account using a super user 
+
+Execute
+gcloud init
+select create a new configuration
+type user
+select your user as admin of GCP
+get credential from cluster using the next command:
+ gcloud container clusters get-credentials esparta-cluster --zone us-west1-b --project devops-k8-86
+
+after that add the service account into RBAC
+
+kubectl create clusterrolebinding cluster-admin-binding  --clusterrole=cluster-admin --user=custom-sa-k8s@devo
+ps-k8-86.iam.gserviceaccount.com
+
