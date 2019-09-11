@@ -127,11 +127,11 @@ gcloud beta container clusters create private-cluster-esparta86 --cluster-versio
 gcloud compute instances create host-bastion --zone us-west1-b --scopes 'https://www.googleapis.com/auth/cloud-platform'
 output:
 NAME          ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP   STATUS
-host-bastion  us-west1-b  n1-standard-1               10.138.0.2   34.82.109.82  RUNNING
+host-bastion  us-west1-b  n1-standard-1               10.138.0.2   x.x.x.x  RUNNING
 
 4. Authorize your external address range, in this case the PUBLIC IP of host bastion
 
-gcloud container clusters update private-cluster-esparta86 --zone us-west1-b --enable-master-authorized-networks --master-authorized-networks 34.82.109.82/32
+gcloud container clusters update private-cluster-esparta86 --zone us-west1-b --enable-master-authorized-networks --master-authorized-networks x.x.x.x/32
 
 5. Log using SSH into host bastion
 
