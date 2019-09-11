@@ -115,4 +115,44 @@ ________________________________________________________________________________
 --------------------------------------------------- CREATE A PRIVATE CLUSTER
 _________________________________________________________________________________________________________________________________________________________________________________________________--before you are going to create a new cluster, you must to enable.
 
+1. Create a subnetwork
 
+gcloud compute networks subnets create custom-subnet --network default --range 10.0.4.0/22 --enable-private-ip-google-access --region us-west1 --secondary-range custom-services-range=10.0.32.0/20,custom-pod-range=10.4.0.0/14
+
+2. Create your private cluster
+
+gcloud beta container clusters create private-cluster-esparta86 --cluster-version 1.13.7-gke.24 --zone "us-west1-b" --enable-private-nodes --enable-ip-alias --machine-type n1-standard-2 --num-nodes 2 --image-type ubuntu --master-ipv4-cidr 172.16.0.32/28 --subnetwork custom-subnet --services-secondary-range-name custom-services-range --cluster-secondary-range-name custom-pod-range --service-account=custom-sa-k8s@robotic-pact-248304.iam.gserviceaccount.com
+
+3. Create a virtual machine 
+gcloud compute instances create host-bastion --zone us-west1-b --scopes 'https://www.googleapis.com/auth/cloud-platform'
+output:
+NAME          ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP   STATUS
+host-bastion  us-west1-b  n1-standard-1               10.138.0.2   34.82.109.82  RUNNING
+
+4. Authorize your external address range, in this case the PUBLIC IP of host bastion
+
+gcloud container clusters update private-cluster-esparta86 --zone us-west1-b --enable-master-authorized-networks --master-authorized-networks 34.82.109.82/32
+
+5. Log using SSH into host bastion
+
+6. gcloud init and select your personal account, please click in url in order to grant permissions.
+
+7. Install kubectl in host bastion using the next command
+   sudo apt-get install kubectl
+  *MAKE SURE your host bastion have a debian image.
+
+7. Access your cluster
+   gcloud container clusters get-credentials private-cluster-esparta86 --zone us-west1-b --project robotic-pact-248304
+
+8. Try to retrieve pods
+
+   kubectl get pods -n kube-system
+
+ouput:
+   NAME                                                             READY   STATUS    RESTARTS   AGE
+event-exporter-v0.2.4-5f88c66fb7-8sr9h                           2/2     Running   0          55m
+fluentd-gcp-scaler-59b7b75cd7-jhk45                              1/1     Running   0          55m
+fluentd-gcp-v3.2.0-6llhq                                         2/2     Running   0          55m
+
+
+  
