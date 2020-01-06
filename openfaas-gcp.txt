@@ -1,0 +1,39 @@
+
+################################### CREATE CLUSTER ########
+gcloud  container clusters create openfaas --num-nodes 2 --cluster-version 1.15.4-gke.22  --machine-type n1-standard-2 --enable-ip-alias  --zone "us-west1-b" --enable-network-policy --image-type ubuntu --disk-size=50 --enable-stackdriver-kubernetes --service-account "custom-sa-k8s@robotic-pact-248304.iam.gserviceaccount.com"
+
+
+################################### Create a cluster admin role binding  ###################################
+
+kubectl create clusterrolebinding "cluster-admin-sa-linda" --clusterrole=cluster-admin --user="custom-sa-k8s@robotic-pact-248304.iam.gserviceaccount.com"
+
+################################### Create a Virtual Machine in GCP  ###################################
+gcloud beta compute --project=robotic-pact-248304 instances create openfaas-server --zone=us-west1-b --machine-type=g1-small --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE --service-account=863737457931-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --image=debian-9-stretch-v20191210 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=openfaas-server --reservation-affinity=any
+
+################################### UPLOAD service account and autenticate   ###################################
+gcloud auth activate-service-account --key-file=robotic-pact.json
+
+sudo apt-get install kubectl
+
+gcloud container clusters get-credentials openfaas --zone us-west1-b --project robotic-pact-248304
+
+################################### INSTALL openfaas using k3sup   ###################################
+ mkdir openfaas
+ cd openfaas/
+ curl -SLsf https://get.k3sup.dev/ | sudo sh
+ k3sup app install openfaas --load-balancer
+
+ curl -SLsf https://cli.openfaas.com | sudo sh
+ 
+################################### GET PASSWORD from secret   ###################################
+
+PASSWORD=$(kubectl get secret -n openfaas basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode ; echo)
+
+faas-cli login --password PASSWORD
+
+
+
+
+
+
+

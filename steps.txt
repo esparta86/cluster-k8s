@@ -155,4 +155,6 @@ fluentd-gcp-scaler-59b7b75cd7-jhk45                              1/1     Running
 fluentd-gcp-v3.2.0-6llhq                                         2/2     Running   0          55m
 
 
-  
+  9. grant to SA cluster admin
+   kubectl create clusterrolebinding cluster-admin-binding-custom-sa --clusterrole=cluster-admin --user=custom-sa-k8s@robo
+tic-pact-248304.iam.gserviceaccount.com
